@@ -1,0 +1,186 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!-- 
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
+    Example:
+    
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+                
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="LocationToViewportPoint_DefaultException" xml:space="preserve">
+    <value>Invalid location.</value>
+  </data>
+  <data name="ViewportPointToLocation_DefaultException" xml:space="preserve">
+    <value>Invalid viewportPoint.</value>
+  </data>
+  <data name="TypeConverter_InvalidRangeFormat" xml:space="preserve">
+    <value>Invalid format or type for Range. Only able to convert strings with formats, \"{0} {1}\" or \"{0},{1}\" where {0} and {1} are valid doubles or ints.</value>
+  </data>
+  <data name="ConfigurationException_NullXml" xml:space="preserve">
+    <value>XmlReader used to initialize the configuration cannot be null.</value>
+  </data>
+  <data name="TypeConverter_InvalidMapMode" xml:space="preserve">
+    <value>Invalid string or type for MapMode.</value>
+  </data>
+  <data name="MapConfiguration_ParseConfiguration_DuplicateSection" xml:space="preserve">
+    <value>Sections cannot have the same sectionName ("{0}"), version ("{1}") and culture ("{2}").</value>
+  </data>
+  <data name="MapConfiguration_ParseConfiguration_InvalidTag" xml:space="preserve">
+    <value>Unsupported Tag "{0}" in configuration xml.</value>
+  </data>
+  <data name="TypeConverter_InvalidApplicationIdCredentialsProvider" xml:space="preserve">
+    <value>Invalid type for ApplicationIdCredentialsProvider. Only able to convert strings.</value>
+  </data>
+  <data name="ConfigurationException_InvalidLoad" xml:space="preserve">
+    <value>Configuration must be loaded before the map loads, and can only be loaded once.</value>
+  </data>
+  <data name="MapConfiguration_ParseConfiguration_InvalidSection_NoVersion" xml:space="preserve">
+    <value>Sections must have version attribution.</value>
+  </data>
+  <data name="IProjectable" xml:space="preserve">
+    <value>IProjectable elements can only reside under other IProjectable elements or Map control directly.</value>
+  </data>
+  <data name="MapConfiguration_ParseConfiguration_DuplicateNodeKey" xml:space="preserve">
+    <value>Nodes within the same section cannot have the same key "{0}".</value>
+  </data>
+  <data name="MapConfiguration_GetSection_NonNull" xml:space="preserve">
+    <value>version and sectionName parameter cannot be empty or null.</value>
+  </data>
+  <data name="MapConfiguration_ParseConfiguration_InvalidRoot" xml:space="preserve">
+    <value>Unsupported root node "{0}" in configuration xml.</value>
+  </data>
+  <data name="MapConfiguration_WebService_InvalidResult" xml:space="preserve">
+    <value>Invalid Result return by MapControlConfiguration service.</value>
+  </data>
+  <data name="TileSource_InvalidSubdomains_DifferentLength" xml:space="preserve">
+    <value />
+  </data>
+  <data name="TileSource_InvalidSubdomains_LengthMoreThan0" xml:space="preserve">
+    <value />
+  </data>
+  <data name="TileSource_InvalidSubdomain_stringNull" xml:space="preserve">
+    <value />
+  </data>
+  <data name="TypeConverter_InvalidLocationCollection" xml:space="preserve">
+    <value />
+  </data>
+  <data name="TypeConverter_InvalidLocationFormat" xml:space="preserve">
+    <value />
+  </data>
+  <data name="TypeConverter_InvalidLocationRectFormat" xml:space="preserve">
+    <value />
+  </data>
+  <data name="TypeConverter_InvalidPositionOriginFormat" xml:space="preserve">
+    <value />
+  </data>
+</root>

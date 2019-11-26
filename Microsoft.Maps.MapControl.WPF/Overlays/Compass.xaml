@@ -1,0 +1,21 @@
+<UserControl x:Class="Microsoft.Maps.MapControl.WPF.Overlays.Compass"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:o="clr-namespace:Microsoft.Maps.MapControl.WPF.Overlays"
+             Width="50" Height="50">
+  <Grid x:Name="_LayoutRoot" x:FieldModifier="private" RenderTransformOrigin=".5,.5">
+    <UIElement.RenderTransform>
+      <RotateTransform Angle="{Binding Path=Heading, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type o:Compass}}}"/>
+    </UIElement.RenderTransform>
+    <Ellipse Fill="Black"/>
+    <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+      <Canvas Width="11.451" Height="9.187" Margin="0,0,0,0">
+        <Path Fill="#ffffffff" Data="F1 M 5.819,0 L 0,9.187 11.451,9.187 5.819,0 Z"/>
+      </Canvas>
+      <TextBlock Text="N" Foreground="White" HorizontalAlignment="Center" FontSize="22" FontFamily="Segoe360"
+                 FontWeight="Bold" TextAlignment="Center"/>
+    </StackPanel>
+  </Grid>
+</UserControl>

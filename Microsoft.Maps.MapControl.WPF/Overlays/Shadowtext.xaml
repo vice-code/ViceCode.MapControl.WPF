@@ -1,0 +1,14 @@
+<UserControl x:Class="Microsoft.Maps.MapControl.WPF.Overlays.ShadowText"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+  <Grid>
+    <TextBlock x:Name="Text1" FontWeight="Normal" Foreground="Black" HorizontalAlignment="Right"
+               TextWrapping="Wrap" Text="Text here" TextAlignment="Right">
+      <UIElement.RenderTransform>
+        <TranslateTransform X="1" Y="1"/>
+      </UIElement.RenderTransform>
+    </TextBlock>
+    <TextBlock x:Name="Text2" FontWeight="Normal" Foreground="White" HorizontalAlignment="Right"
+               TextWrapping="Wrap" Text="Text here" TextAlignment="Right"/>
+  </Grid>
+</UserControl>
