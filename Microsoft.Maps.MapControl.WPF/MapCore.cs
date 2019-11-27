@@ -12,6 +12,7 @@ using System.Windows.Media.Media3D;
 using System.Windows.Threading;
 using Microsoft.Maps.MapControl.WPF.Core;
 using Microsoft.Maps.MapControl.WPF.Design;
+using Microsoft.Maps.MapControl.WPF.Resources;
 using Microsoft.Maps.MapExtras;
 
 namespace Microsoft.Maps.MapControl.WPF
@@ -19,9 +20,9 @@ namespace Microsoft.Maps.MapControl.WPF
     [ContentProperty("Children")]
     public class MapCore : Control, IDisposable
     {
-        public static readonly DependencyProperty ZoomLevelProperty = DependencyProperty.Register(nameof(ZoomLevel), typeof(double), typeof(MapCore), new PropertyMetadata(1.0, new PropertyChangedCallback(OnZoomLevelChanged)));
+        public static readonly DependencyProperty ZoomLevelProperty = DependencyProperty.Register(nameof(ZoomLevel), typeof(double), typeof(MapCore), new PropertyMetadata(1, new PropertyChangedCallback(OnZoomLevelChanged)));
         public static readonly DependencyProperty ScaleVisibilityProperty = DependencyProperty.Register(nameof(ScaleVisibility), typeof(Visibility), typeof(MapCore), new PropertyMetadata(new PropertyChangedCallback(OnScaleVisibilityChanged)));
-        public static readonly DependencyProperty HeadingProperty = DependencyProperty.Register(nameof(Heading), typeof(double), typeof(MapCore), new PropertyMetadata(0.0, new PropertyChangedCallback(OnHeadingChanged)));
+        public static readonly DependencyProperty HeadingProperty = DependencyProperty.Register(nameof(Heading), typeof(double), typeof(MapCore), new PropertyMetadata(0, new PropertyChangedCallback(OnHeadingChanged)));
         public static readonly DependencyProperty CenterProperty = DependencyProperty.Register(nameof(Center), typeof(Location), typeof(MapCore), new PropertyMetadata(new Location(), new PropertyChangedCallback(OnCenterChanged)));
         public static readonly DependencyProperty CredentialsProviderProperty = DependencyProperty.Register(nameof(CredentialsProvider), typeof(CredentialsProvider), typeof(MapCore), new PropertyMetadata(new PropertyChangedCallback(OnCredentialsProviderChangedCallback)));
         public static readonly DependencyProperty CultureProperty = DependencyProperty.Register(nameof(Culture), typeof(string), typeof(MapCore), new PropertyMetadata((sender, e) => (sender as MapCore).UpdateCulture()));
@@ -78,8 +79,8 @@ namespace Microsoft.Maps.MapControl.WPF
             _NormalizedMercatorToViewport_Scale = Matrix3D.Identity;
             _NormalizedMercatorToViewport_Rotate = Matrix3D.Identity;
             _NormalizedMercatorToViewport_TranslatePost = Matrix3D.Identity;
-            ModeCrossFadeDuration = new Duration(TimeSpan.FromMilliseconds(500.0));
-            _CurrentMapModeTransitionTimeout = new Timer(4000.0)
+            ModeCrossFadeDuration = new Duration(TimeSpan.FromMilliseconds(500));
+            _CurrentMapModeTransitionTimeout = new Timer(4000)
             {
                 AutoReset = false
             };
@@ -165,9 +166,7 @@ namespace Microsoft.Maps.MapControl.WPF
             set => SetValue(ScaleVisibilityProperty, value);
         }
 
-        private static void OnScaleVisibilityChanged(
-          DependencyObject d,
-          DependencyPropertyChangedEventArgs e) => ((MapCore)d).OnScaleVisibilityChanged(e);
+        private static void OnScaleVisibilityChanged(DependencyObject d, DependencyPropertyChangedEventArgs e) => ((MapCore)d).OnScaleVisibilityChanged(e);
 
         protected virtual void OnScaleVisibilityChanged(DependencyPropertyChangedEventArgs eventArgs)
         {
@@ -216,9 +215,7 @@ namespace Microsoft.Maps.MapControl.WPF
             set => SetValue(CredentialsProviderProperty, value);
         }
 
-        private static void OnCredentialsProviderChangedCallback(
-          DependencyObject d,
-          DependencyPropertyChangedEventArgs eventArgs) => ((MapCore)d).OnCredentialsProviderChanged(eventArgs);
+        private static void OnCredentialsProviderChangedCallback(DependencyObject d, DependencyPropertyChangedEventArgs eventArgs) => ((MapCore)d).OnCredentialsProviderChanged(eventArgs);
 
         protected virtual void OnCredentialsProviderChanged(DependencyPropertyChangedEventArgs eventArgs)
         {
@@ -229,9 +226,7 @@ namespace Microsoft.Maps.MapControl.WPF
             get
             {
                 var str = (string)GetValue(CultureProperty);
-                if (!string.IsNullOrEmpty(str))
-                    return str;
-                return CultureInfo.CurrentUICulture.Name;
+                return !string.IsNullOrEmpty(str) ? str : CultureInfo.CurrentUICulture.Name;
             }
             set
             {
@@ -273,11 +268,9 @@ namespace Microsoft.Maps.MapControl.WPF
         private void UpdateMapMode()
         {
             if (Mode is null)
-                throw new InvalidOperationException("map mode must be non-null");
+                throw new InvalidOperationException(ExceptionStrings.MapCore_UpdateMapMode_NonNull);
             if (_ModeSwitchAnationDriver.IsAnimating)
-            {
                 _PendingMapMode = Mode;
-            }
             else
             {
                 foreach (var mapMode in _MapModes)
@@ -297,14 +290,13 @@ namespace Microsoft.Maps.MapControl.WPF
                 _MapModeContainer.Children.Insert(0, _CurrentMapMode);
                 if (_MapModes.Count > 1)
                 {
-                    _CurrentMapMode.Opacity = 0.0;
+                    _CurrentMapMode.Opacity = 0;
                     _CurrentMapMode.Rendered += new EventHandler(_CurrentMapMode_Rendered);
                     _CurrentMapModeTransitionTimeout.Enabled = true;
                     _CurrentMapModeTransitionTimeout.Start();
                 }
                 _PendingMapMode = null;
-                if (ModeChanged is object)
-                    ModeChanged(this, new MapEventArgs());
+                ModeChanged?.Invoke(this, new MapEventArgs());
             }
             UpdateView();
         }
@@ -333,35 +325,31 @@ namespace Microsoft.Maps.MapControl.WPF
 
         public void SetView(LocationRect boundingRectangle)
         {
-            var viewportSize = new Size(ActualWidth, ActualHeight);
-            if (viewportSize.Width <= 0.0 || double.IsInfinity(viewportSize.Width) || (double.IsNaN(viewportSize.Width) || viewportSize.Height <= 0.0) || (double.IsInfinity(viewportSize.Height) || double.IsNaN(viewportSize.Height)))
+            var viewportSize = ViewportSize;
+            if (viewportSize.Width <= 0 || double.IsInfinity(viewportSize.Width) || double.IsNaN(viewportSize.Width) || viewportSize.Height <= 0 || double.IsInfinity(viewportSize.Height) || double.IsNaN(viewportSize.Height))
                 throw new InvalidOperationException("The actual size of the control must be positive and finite in order to set the view using a bounding rectangle.");
             ZoomAndRotateOrigin = new Point?();
-            SetViewInternal(ConvertLocationToNormalizedMercator(MapMath.GetMercatorCenter(boundingRectangle)), MapMath.LocationRectToMercatorZoomLevel(viewportSize, boundingRectangle), 0.0);
+            SetViewInternal(ConvertLocationToNormalizedMercator(MapMath.GetMercatorCenter(boundingRectangle)), MapMath.LocationRectToMercatorZoomLevel(viewportSize, boundingRectangle), 0);
         }
 
         public void SetView(IEnumerable<Location> locations, Thickness margin, double heading)
         {
-            if (margin.Left < 0.0 || margin.Right < 0.0 || (margin.Top < 0.0 || margin.Bottom < 0.0))
+            if (margin.Left < 0 || margin.Right < 0 || (margin.Top < 0 || margin.Bottom < 0))
                 throw new ArgumentOutOfRangeException(nameof(margin));
-            var viewportSize = new Size(ActualWidth, ActualHeight);
-            if (viewportSize.Width <= 0.0 || double.IsInfinity(viewportSize.Width) || (double.IsNaN(viewportSize.Width) || viewportSize.Height <= 0.0) || (double.IsInfinity(viewportSize.Height) || double.IsNaN(viewportSize.Height)))
+            var viewportSize = ViewportSize;
+            if (viewportSize.Width <= 0 || double.IsInfinity(viewportSize.Width) || double.IsNaN(viewportSize.Width) || viewportSize.Height <= 0 || double.IsInfinity(viewportSize.Height) || double.IsNaN(viewportSize.Height))
                 throw new InvalidOperationException("The actual size of the control must be positive and finite in order to set the view using a bounding rectangle.");
             ZoomAndRotateOrigin = new Point?();
             MapMath.CalculateViewFromLocations(locations, viewportSize, TargetHeading, margin, out var centerNormalizedMercator, out var zoomLevel);
             SetViewInternal(centerNormalizedMercator, zoomLevel, heading);
         }
 
-        public void SetView(
-          IEnumerable<Location> locations,
-          Thickness margin,
-          double heading,
-          double maxZoomLevel)
+        public void SetView(IEnumerable<Location> locations, Thickness margin, double heading, double maxZoomLevel)
         {
-            if (margin.Left < 0.0 || margin.Right < 0.0 || (margin.Top < 0.0 || margin.Bottom < 0.0))
+            if (margin.Left < 0 || margin.Right < 0 || (margin.Top < 0 || margin.Bottom < 0))
                 throw new ArgumentOutOfRangeException(nameof(margin));
-            var viewportSize = new Size(ActualWidth, ActualHeight);
-            if (viewportSize.Width <= 0.0 || double.IsInfinity(viewportSize.Width) || (double.IsNaN(viewportSize.Width) || viewportSize.Height <= 0.0) || (double.IsInfinity(viewportSize.Height) || double.IsNaN(viewportSize.Height)))
+            var viewportSize = ViewportSize;
+            if (viewportSize.Width <= 0 || double.IsInfinity(viewportSize.Width) || (double.IsNaN(viewportSize.Width) || viewportSize.Height <= 0) || (double.IsInfinity(viewportSize.Height) || double.IsNaN(viewportSize.Height)))
                 throw new InvalidOperationException("The actual size of the control must be positive and finite in order to set the view using a bounding rectangle.");
             ZoomAndRotateOrigin = new Point?();
             MapMath.CalculateViewFromLocations(locations, viewportSize, TargetHeading, margin, out var centerNormalizedMercator, out var zoomLevel);
@@ -380,7 +368,7 @@ namespace Microsoft.Maps.MapControl.WPF
             get
             {
                 var point = ApplyWorldWrap(new Point(_CenterNormalizedMercatorSpringX.TargetValue, _CenterNormalizedMercatorSpringY.TargetValue));
-                return MapMath.NormalizeLocation(MercatorCube.Instance.ToLocation(new MapExtras.Point3D(point.X, point.Y, 0.0)));
+                return MapMath.NormalizeLocation(MercatorCube.Instance.ToLocation(new MapExtras.Point3D(point.X, point.Y, 0)));
             }
         }
 
@@ -399,10 +387,10 @@ namespace Microsoft.Maps.MapControl.WPF
                 var viewportSize = ViewportSize;
                 return new LocationRect(new Location[4]
                 {
-          ViewportPointToLocation(new Point(0.0, 0.0)),
-          ViewportPointToLocation(new Point(0.0, ViewportSize.Height)),
-          ViewportPointToLocation(new Point(ViewportSize.Width, ViewportSize.Height)),
-          ViewportPointToLocation(new Point(ViewportSize.Width, 0.0))
+                    ViewportPointToLocation(new Point(0, 0)),
+                    ViewportPointToLocation(new Point(0, viewportSize.Height)),
+                    ViewportPointToLocation(new Point(viewportSize.Width, viewportSize.Height)),
+                    ViewportPointToLocation(new Point(viewportSize.Width, 0))
                 });
             }
         }
@@ -456,30 +444,19 @@ namespace Microsoft.Maps.MapControl.WPF
 
         internal Grid MapForegroundContainer { get; }
 
-        private Point TransformNormalizedMercatorToViewport_Current(Point normalizedMercatorPoint)
-        {
-            var viewportSize = new Size(ActualWidth, ActualHeight);
-            var identity1 = Matrix3D.Identity;
-            var identity2 = Matrix3D.Identity;
-            CalculateNormalizedMercatorToViewportMapping(viewportSize, new Point(_CenterNormalizedMercatorSpringX.CurrentValue, _CenterNormalizedMercatorSpringY.CurrentValue), _HeadingSpring.CurrentValue, _ZoomLevelSpring.CurrentValue, false, ref identity1, ref identity2);
-            return Transform(identity1, normalizedMercatorPoint);
-        }
-
         internal Point TransformViewportToNormalizedMercator_Current(Point viewportPoint)
         {
-            var viewportSize = new Size(ActualWidth, ActualHeight);
             var identity1 = Matrix3D.Identity;
             var identity2 = Matrix3D.Identity;
-            CalculateNormalizedMercatorToViewportMapping(viewportSize, new Point(_CenterNormalizedMercatorSpringX.CurrentValue, _CenterNormalizedMercatorSpringY.CurrentValue), _HeadingSpring.CurrentValue, _ZoomLevelSpring.CurrentValue, false, ref identity1, ref identity2);
+            CalculateNormalizedMercatorToViewportMapping(ViewportSize, new Point(_CenterNormalizedMercatorSpringX.CurrentValue, _CenterNormalizedMercatorSpringY.CurrentValue), _HeadingSpring.CurrentValue, _ZoomLevelSpring.CurrentValue, false, ref identity1, ref identity2);
             return Transform(identity2, viewportPoint);
         }
 
         internal Point TransformViewportToNormalizedMercator_Target(Point viewportPoint)
         {
-            var viewportSize = new Size(ActualWidth, ActualHeight);
             var identity1 = Matrix3D.Identity;
             var identity2 = Matrix3D.Identity;
-            CalculateNormalizedMercatorToViewportMapping(viewportSize, new Point(_CenterNormalizedMercatorSpringX.TargetValue, _CenterNormalizedMercatorSpringY.TargetValue), _HeadingSpring.TargetValue, _ZoomLevelSpring.TargetValue, false, ref identity1, ref identity2);
+            CalculateNormalizedMercatorToViewportMapping(ViewportSize, new Point(_CenterNormalizedMercatorSpringX.TargetValue, _CenterNormalizedMercatorSpringY.TargetValue), _HeadingSpring.TargetValue, _ZoomLevelSpring.TargetValue, false, ref identity1, ref identity2);
             return Transform(identity2, viewportPoint);
         }
 
@@ -501,11 +478,11 @@ namespace Microsoft.Maps.MapControl.WPF
         private void AnimateViewUsingZoomAndPan(double zoomLevel, Point centerNormalizedMercator)
         {
             _ZoomAndPan_FromZoomLevel = _ZoomLevelSpring.CurrentValue;
-            _ZoomAndPan_FromRect = new Rect(TransformViewportToNormalizedMercator_Current(new Point(0.0, 0.0)), TransformViewportToNormalizedMercator_Current(new Point(ActualWidth, ActualHeight)));
-            var num = Math.Pow(2.0, _ZoomAndPan_FromZoomLevel - zoomLevel);
-            var toRect = new Rect(0.0, 0.0, _ZoomAndPan_FromRect.Width * num, _ZoomAndPan_FromRect.Height * num);
-            toRect.X = centerNormalizedMercator.X - toRect.Width / 2.0;
-            toRect.Y = centerNormalizedMercator.Y - toRect.Height / 2.0;
+            _ZoomAndPan_FromRect = new Rect(TransformViewportToNormalizedMercator_Current(new Point(0, 0)), TransformViewportToNormalizedMercator_Current(new Point(ActualWidth, ActualHeight)));
+            var num = Math.Pow(2, _ZoomAndPan_FromZoomLevel - zoomLevel);
+            var toRect = new Rect(0, 0, _ZoomAndPan_FromRect.Width * num, _ZoomAndPan_FromRect.Height * num);
+            toRect.X = centerNormalizedMercator.X - toRect.Width / 2;
+            toRect.Y = centerNormalizedMercator.Y - toRect.Height / 2;
             toRect.X += Math.Floor(_CenterNormalizedMercatorSpringX.CurrentValue);
             toRect.Y += Math.Floor(_CenterNormalizedMercatorSpringY.CurrentValue);
             _ZoomAndPanAnimator.Begin(_ZoomAndPan_FromRect, toRect, out var duration);
@@ -516,7 +493,7 @@ namespace Microsoft.Maps.MapControl.WPF
         private void _ZoomAndPanAnimationDriver_AnimationProgressChanged(object sender, EventArgs e)
         {
             _ZoomAndPanAnimator.Tick(_ZoomAndPanAnimationDriver.AnimationProgress, out var width, out var center);
-            _ZoomLevelSpring.SnapToValue(Math.Log(_ZoomAndPan_FromRect.Width / width) / Math.Log(2.0) + _ZoomAndPan_FromZoomLevel);
+            _ZoomLevelSpring.SnapToValue(Math.Log(_ZoomAndPan_FromRect.Width / width) / Math.Log(2) + _ZoomAndPan_FromZoomLevel);
             _CenterNormalizedMercatorSpringX.SnapToValue(center.X);
             _CenterNormalizedMercatorSpringY.SnapToValue(center.Y);
             UpdateView();
@@ -535,55 +512,40 @@ namespace Microsoft.Maps.MapControl.WPF
             _CurrentMapMode.ChooseLevelOfDetailSettings = TilePyramidRenderable.ChooseLevelOfDetailSettingsDownloadNormal;
         }
 
-        private void CalculateNormalizedMercatorToViewportMapping(
-          Size viewportSize,
-          Point centerNormalizedMercator,
-          double heading,
-          double zoomLevel,
-          bool applyWorldWrap,
-          ref Matrix3D normalizedMercatorToViewport,
-          ref Matrix3D viewportToNormalizedMercator)
+        private void CalculateNormalizedMercatorToViewportMapping(Size viewportSize, Point centerNormalizedMercator, double heading, double zoomLevel, bool applyWorldWrap, ref Matrix3D normalizedMercatorToViewport, ref Matrix3D viewportToNormalizedMercator)
         {
             var point = applyWorldWrap ? ApplyWorldWrap(centerNormalizedMercator) : centerNormalizedMercator;
             _NormalizedMercatorToViewport_TranslatePre.OffsetX = -point.X;
             _NormalizedMercatorToViewport_TranslatePre.OffsetY = -point.Y;
-            var num = 256.0 * Math.Pow(2.0, zoomLevel);
+            var num = 256 * Math.Pow(2, zoomLevel);
             _NormalizedMercatorToViewport_Scale.M11 = num;
             _NormalizedMercatorToViewport_Scale.M22 = num;
-            _NormalizedMercatorToViewport_Rotate = VectorMath.RotationMatrix3DZ(Math.PI * heading / 180.0);
-            _NormalizedMercatorToViewport_TranslatePost.OffsetX = viewportSize.Width / 2.0;
-            _NormalizedMercatorToViewport_TranslatePost.OffsetY = viewportSize.Height / 2.0;
+            _NormalizedMercatorToViewport_Rotate = VectorMath.RotationMatrix3DZ(Math.PI * heading / 180);
+            _NormalizedMercatorToViewport_TranslatePost.OffsetX = viewportSize.Width / 2;
+            _NormalizedMercatorToViewport_TranslatePost.OffsetY = viewportSize.Height / 2;
             normalizedMercatorToViewport = _NormalizedMercatorToViewport_TranslatePre * _NormalizedMercatorToViewport_Scale * _NormalizedMercatorToViewport_Rotate * _NormalizedMercatorToViewport_TranslatePost;
             viewportToNormalizedMercator = normalizedMercatorToViewport;
             viewportToNormalizedMercator.Invert();
         }
 
-        private Point ApplyWorldWrap(Point normalizedMercator) => new Point(normalizedMercator.X - Math.Floor(normalizedMercator.X), normalizedMercator.Y);
-
-        private Point ApplyWorldWrapInverse(
-      Point normalizedMercator,
-      Point normalizedMercatorTarget)
-        {
-            var point = ApplyWorldWrap(normalizedMercator);
-            return new Point(Math.Floor(normalizedMercatorTarget.X) + point.X, normalizedMercatorTarget.Y + point.Y);
-        }
+        private static Point ApplyWorldWrap(Point normalizedMercator) => new Point(normalizedMercator.X - Math.Floor(normalizedMercator.X), normalizedMercator.Y);
 
         private void UpdateView()
         {
-            var viewportSize = new Size(ActualWidth, ActualHeight);
+            var viewportSize = ViewportSize;
             var identity1 = Matrix3D.Identity;
             var identity2 = Matrix3D.Identity;
-            if (_CenterNormalizedMercatorSpringY.CurrentValue < 0.0)
-                _CenterNormalizedMercatorSpringY.SnapToValue(0.0);
-            else if (_CenterNormalizedMercatorSpringY.CurrentValue > 1.0)
-                _CenterNormalizedMercatorSpringY.SnapToValue(1.0);
+            if (_CenterNormalizedMercatorSpringY.CurrentValue < 0)
+                _CenterNormalizedMercatorSpringY.SnapToValue(0);
+            else if (_CenterNormalizedMercatorSpringY.CurrentValue > 1)
+                _CenterNormalizedMercatorSpringY.SnapToValue(1);
             CalculateNormalizedMercatorToViewportMapping(viewportSize, new Point(_CenterNormalizedMercatorSpringX.CurrentValue, _CenterNormalizedMercatorSpringY.CurrentValue), _HeadingSpring.CurrentValue, _ZoomLevelSpring.CurrentValue, true, ref identity1, ref identity2);
             foreach (var mapMode in _MapModes)
             {
                 mapMode.CurrentMapCopyInstance = new Point(Math.Floor(_CenterNormalizedMercatorSpringX.CurrentValue), Math.Floor(_CenterNormalizedMercatorSpringY.CurrentValue));
                 ((IProjectable)mapMode).SetView(viewportSize, identity1, identity2);
             }
-          ((IProjectable)_MapUserLayerContainer).SetView(viewportSize, identity1, identity2);
+            ((IProjectable)_MapUserLayerContainer).SetView(viewportSize, identity1, identity2);
             foreach (var child in Children)
                 (child as IProjectable)?.SetView(viewportSize, identity1, identity2);
             UpdateViewDependencyProperties();
@@ -600,17 +562,17 @@ namespace Microsoft.Maps.MapControl.WPF
 
         private void _MapContainer_SizeChanged(object sender, SizeChangedEventArgs e)
         {
-            ((RectangleGeometry)_MapContainer.Clip).Rect = new Rect(0.0, 0.0, e.NewSize.Width, e.NewSize.Height);
+            ((RectangleGeometry)_MapContainer.Clip).Rect = new Rect(0, 0, e.NewSize.Width, e.NewSize.Height);
             UpdateView();
         }
 
-        private Location ConvertNormalizedMercatorToLocation(Point normalizedMercatorPoint)
+        private static Location ConvertNormalizedMercatorToLocation(Point normalizedMercatorPoint)
         {
             var point = ApplyWorldWrap(normalizedMercatorPoint);
-            return MapMath.NormalizeLocation(MercatorCube.Instance.ToLocation(new MapExtras.Point3D(point.X, point.Y, 0.0)));
+            return MapMath.NormalizeLocation(MercatorCube.Instance.ToLocation(new MapExtras.Point3D(point.X, point.Y, 0)));
         }
 
-        private Point ConvertLocationToNormalizedMercator(Location location) => MercatorCube.Instance.FromLocation(location).ToPoint();
+        private static Point ConvertLocationToNormalizedMercator(Location location) => MercatorCube.Instance.FromLocation(location).ToPoint();
 
         private void MapCore_Loaded(object sender, RoutedEventArgs e)
         {
@@ -624,7 +586,7 @@ namespace Microsoft.Maps.MapControl.WPF
 
         private void SetViewInternal(Point centerNormalizedMercator, double zoomLevel, double heading)
         {
-            zoomLevel = Math.Min(21.0, Math.Max(0.75, zoomLevel));
+            zoomLevel = Math.Min(21, Math.Max(0.75, zoomLevel));
             if (!ViewBeingSetByUserInput)
                 ZoomAndRotateOrigin = new Point?();
             var viewIsAnimating = ViewIsAnimating;
@@ -691,11 +653,7 @@ namespace Microsoft.Maps.MapControl.WPF
             _UserInputTimeout.Stop();
         }
 
-        private void AnimateViewUsingSprings(
-          Point centerNormalizedMercator,
-          double zoomLevel,
-          double heading,
-          bool setViewImmediately)
+        private void AnimateViewUsingSprings(Point centerNormalizedMercator, double zoomLevel, double heading, bool setViewImmediately)
         {
             var nullable = _ZoomAndRotateOrigin.HasValue ? new Point?(TransformViewportToNormalizedMercator_Current(_ZoomAndRotateOrigin.Value)) : new Point?();
             var currentValue1 = _HeadingSpring.CurrentValue;
@@ -725,20 +683,13 @@ namespace Microsoft.Maps.MapControl.WPF
             UpdateView();
         }
 
-        private Point Transform(Matrix3D matrix, Point point)
+        private static Point Transform(Matrix3D matrix, Point point)
         {
-            var point3D = matrix.Transform(new System.Windows.Media.Media3D.Point3D(point.X, point.Y, 0.0));
+            var point3D = matrix.Transform(new System.Windows.Media.Media3D.Point3D(point.X, point.Y, 0));
             return new Point(point3D.X, point3D.Y);
         }
 
-        private Point2D Transform(Matrix3D matrix, Point2D point)
-        {
-            var point3D = matrix.Transform(new System.Windows.Media.Media3D.Point3D(point.X, point.Y, 0.0));
-            return new Point2D(point3D.X, point3D.Y);
-        }
-
-        private void AdjustCenterAfterTransform(
-          Point zoomAndRotateOriginNormalizedMercatorPreUpdate)
+        private void AdjustCenterAfterTransform(Point zoomAndRotateOriginNormalizedMercatorPreUpdate)
         {
             var normalizedMercatorCurrent = TransformViewportToNormalizedMercator_Current(_ZoomAndRotateOrigin.Value);
             _CenterNormalizedMercatorSpringX.SnapToValue(_CenterNormalizedMercatorSpringX.CurrentValue + zoomAndRotateOriginNormalizedMercatorPreUpdate.X - normalizedMercatorCurrent.X);
@@ -789,7 +740,7 @@ namespace Microsoft.Maps.MapControl.WPF
            {
                if (_MapModes.Count <= 1 || _ModeSwitchAnationDriver.IsAnimating)
                    return;
-               _CurrentMapMode.Opacity = 1.0;
+               _CurrentMapMode.Opacity = 1;
                _ModeSwitchAnationDriver.Start(ModeCrossFadeDuration);
            }));
         }
@@ -798,7 +749,7 @@ namespace Microsoft.Maps.MapControl.WPF
         {
             if (_MapModes.Count <= 1 || _ModeSwitchAnationDriver.IsAnimating || !_CurrentMapMode.HasSomeTiles)
                 return;
-            _CurrentMapMode.Opacity = 1.0;
+            _CurrentMapMode.Opacity = 1;
             _ModeSwitchAnationDriver.Start(ModeCrossFadeDuration);
             _CurrentMapModeTransitionTimeout.Enabled = false;
         }
@@ -814,6 +765,6 @@ namespace Microsoft.Maps.MapControl.WPF
             Dispatcher.BeginInvoke(new Action(() => Mode = _PendingMapMode));
         }
 
-        private void _ModeSwitchAnationDriver_AnimationProgressChanged(object sender, EventArgs e) => _MapModes[0].Opacity = 1.0 - _ModeSwitchAnationDriver.AnimationProgress;
+        private void _ModeSwitchAnationDriver_AnimationProgressChanged(object sender, EventArgs e) => _MapModes[0].Opacity = 1 - _ModeSwitchAnationDriver.AnimationProgress;
     }
 }
