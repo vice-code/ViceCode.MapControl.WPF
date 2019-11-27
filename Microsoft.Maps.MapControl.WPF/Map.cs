@@ -54,11 +54,8 @@ namespace Microsoft.Maps.MapControl.WPF
 
         private static string GetVersion()
         {
-            var str = string.Empty;
             var strArray = Assembly.GetExecutingAssembly().FullName.Split(',');
-            if (strArray.Length > 1)
-                str = strArray[1].Replace("Version=", string.Empty).Trim();
-            return str;
+            return strArray.Length > 1 ? strArray[1].Replace("Version=", string.Empty, StringComparison.Ordinal).Trim() : string.Empty;
         }
 
         static Map() => DefaultStyleKeyProperty.OverrideMetadata(typeof(Map), new FrameworkPropertyMetadata(typeof(Map)));
@@ -83,7 +80,7 @@ namespace Microsoft.Maps.MapControl.WPF
             _InertiaProcessor.Completed += (sender, e) => StopInertia();
             _InertiaTimer = new DispatcherTimer()
             {
-                Interval = TimeSpan.FromMilliseconds(30.0)
+                Interval = TimeSpan.FromMilliseconds(30)
             };
             _InertiaTimer.Tick += (sender, e) => _InertiaProcessor.Process(DateTime.UtcNow.Ticks);
             IsTabStop = true;
@@ -110,15 +107,7 @@ namespace Microsoft.Maps.MapControl.WPF
 
         public static bool UseHttps { get; set; } = false;
 
-        public static string UriScheme
-        {
-            get
-            {
-                if (!UseHttps)
-                    return Uri.UriSchemeHttp;
-                return Uri.UriSchemeHttps;
-            }
-        }
+        public static string UriScheme => !UseHttps ? Uri.UriSchemeHttp : Uri.UriSchemeHttps;
 
         public static int LoggingDelay { get; set; }
 
@@ -187,11 +176,11 @@ namespace Microsoft.Maps.MapControl.WPF
             if (e.Key == Key.Up || e.Key == Key.Down || (e.Key == Key.Left || e.Key == Key.Right))
             {
                 var point = new Point();
-                point.X += e.Key == Key.Right ? 100.0 : 0.0;
-                point.X += e.Key == Key.Left ? -100.0 : 0.0;
-                point.Y += e.Key == Key.Up ? -100.0 : 0.0;
-                point.Y += e.Key == Key.Down ? 100.0 : 0.0;
-                var normalizedMercatorTarget = TransformViewportToNormalizedMercator_Target(new Point(ActualWidth / 2.0 + point.X, ActualHeight / 2.0 + point.Y));
+                point.X += e.Key == Key.Right ? 100 : 0;
+                point.X += e.Key == Key.Left ? -100 : 0;
+                point.Y += e.Key == Key.Up ? -100 : 0;
+                point.Y += e.Key == Key.Down ? 100 : 0;
+                var normalizedMercatorTarget = TransformViewportToNormalizedMercator_Target(new Point(ActualWidth / 2 + point.X, ActualHeight / 2 + point.Y));
                 ArrestZoomAndRotation();
                 ViewBeingSetByUserInput = true;
                 SetView(normalizedMercatorTarget, TargetZoomLevel, TargetHeading);
@@ -199,14 +188,14 @@ namespace Microsoft.Maps.MapControl.WPF
             }
             else if (e.Key == Key.OemPlus || e.Key == Key.Add)
             {
-                ZoomAndRotateOrigin = new Point?(new Point(ActualWidth / 2.0, ActualHeight / 2.0));
+                ZoomAndRotateOrigin = new Point?(new Point(ActualWidth / 2, ActualHeight / 2));
                 ViewBeingSetByUserInput = true;
                 SetView(TargetZoomLevel + 0.5, TargetHeading);
                 ViewBeingSetByUserInput = false;
             }
             else if (e.Key == Key.OemMinus || e.Key == Key.Subtract)
             {
-                ZoomAndRotateOrigin = new Point?(new Point(ActualWidth / 2.0, ActualHeight / 2.0));
+                ZoomAndRotateOrigin = new Point?(new Point(ActualWidth / 2, ActualHeight / 2));
                 ViewBeingSetByUserInput = true;
                 SetView(TargetZoomLevel - 0.5, TargetHeading);
                 ViewBeingSetByUserInput = false;
@@ -244,7 +233,7 @@ namespace Microsoft.Maps.MapControl.WPF
             if (e.Handled)
                 return;
             _LeftButtonDownNormalizedMercatorPoint = new Point?();
-            ZoomAboutViewportPoint(1.0, e.GetPosition(this));
+            ZoomAboutViewportPoint(1, e.GetPosition(this));
             base.OnMouseDoubleClick(e);
         }
 
@@ -255,7 +244,7 @@ namespace Microsoft.Maps.MapControl.WPF
                 mouseWheel(this, e);
             if (e.Handled)
                 return;
-            ZoomAboutViewportPoint(e.Delta / 100.0, e.GetPosition(this));
+            ZoomAboutViewportPoint(e.Delta / 100, e.GetPosition(this));
             base.OnMouseWheel(e);
         }
 
@@ -278,7 +267,7 @@ namespace Microsoft.Maps.MapControl.WPF
                 {
                     _LeftButtonDownViewportPoint = new Point(double.NaN, double.NaN);
                     var normalizedMercatorTarget1 = TransformViewportToNormalizedMercator_Target(position);
-                    var normalizedMercatorTarget2 = TransformViewportToNormalizedMercator_Target(new Point(ActualWidth / 2.0, ActualHeight / 2.0));
+                    var normalizedMercatorTarget2 = TransformViewportToNormalizedMercator_Target(new Point(ActualWidth / 2, ActualHeight / 2));
                     var centerNormalizedMercator = new Point(_LeftButtonDownNormalizedMercatorPoint.Value.X - normalizedMercatorTarget1.X + normalizedMercatorTarget2.X, _LeftButtonDownNormalizedMercatorPoint.Value.Y - normalizedMercatorTarget1.Y + normalizedMercatorTarget2.Y);
                     var animationLevel = AnimationLevel;
                     AnimationLevel = AnimationLevel.None;
@@ -298,8 +287,7 @@ namespace Microsoft.Maps.MapControl.WPF
             if (e.StylusDevice is object && e.StylusDevice.TabletDevice is object && e.StylusDevice.TabletDevice.Type == TabletDeviceType.Touch)
                 return;
             var mouseLeftButtonUp = MouseLeftButtonUp;
-            if (mouseLeftButtonUp is object)
-                mouseLeftButtonUp(this, e);
+            mouseLeftButtonUp?.Invoke(this, e);
             if (e.Handled)
                 return;
             ReleaseMouseCapture();
@@ -346,8 +334,7 @@ namespace Microsoft.Maps.MapControl.WPF
         protected override void OnTouchMove(TouchEventArgs e)
         {
             var touchMove = TouchMove;
-            if (touchMove is object)
-                touchMove(this, e);
+            touchMove?.Invoke(this, e);
             if (e.Handled)
                 return;
             if (e.TouchDevice.Captured == this)
@@ -361,8 +348,7 @@ namespace Microsoft.Maps.MapControl.WPF
         protected override void OnTouchUp(TouchEventArgs e)
         {
             var touchUp = TouchUp;
-            if (touchUp is object)
-                touchUp(this, e);
+            touchUp?.Invoke(this, e);
             _lastTouchTick = 0L;
             if (e.Handled)
                 return;
@@ -403,18 +389,18 @@ namespace Microsoft.Maps.MapControl.WPF
         {
             if (!storedManipulation.HasValuesStored())
                 return;
-            var heading = TargetHeading + storedManipulation.Rotation * (180.0 / Math.PI);
+            var heading = TargetHeading + storedManipulation.Rotation * (180 / Math.PI);
             var animationLevel = AnimationLevel;
             AnimationLevel = AnimationLevel.None;
             if (_touchCount > 1)
             {
                 ZoomAndRotateOrigin = new Point?(new Point(storedManipulation.OriginX, storedManipulation.OriginY));
-                if (storedManipulation.ScaleX != 1.0 || storedManipulation.ScaleY != 1.0)
+                if (storedManipulation.ScaleX != 1 || storedManipulation.ScaleY != 1)
                 {
                     _cancelDoubleTap();
-                    ZoomAboutViewportPoint(Math.Log(Math.Max(storedManipulation.ScaleX, storedManipulation.ScaleY)) / Math.Log(2.0), ZoomAndRotateOrigin.Value);
+                    ZoomAboutViewportPoint(Math.Log(Math.Max(storedManipulation.ScaleX, storedManipulation.ScaleY)) / Math.Log(2), ZoomAndRotateOrigin.Value);
                 }
-                if (storedManipulation.Rotation != 0.0)
+                if (storedManipulation.Rotation != 0)
                 {
                     _cancelDoubleTap();
                     ViewBeingSetByUserInput = true;
@@ -422,11 +408,11 @@ namespace Microsoft.Maps.MapControl.WPF
                     ViewBeingSetByUserInput = false;
                 }
             }
-            if (storedManipulation.TranslationX != 0.0 || storedManipulation.TranslationY != 0.0)
+            if (storedManipulation.TranslationX != 0 || storedManipulation.TranslationY != 0)
             {
                 if (Math.Abs(storedManipulation.TranslationX) > (double)_doubleTapThreshold || Math.Abs(storedManipulation.TranslationY) > (double)_doubleTapThreshold)
                     _cancelDoubleTap();
-                var normalizedMercatorTarget = TransformViewportToNormalizedMercator_Target(new Point(ActualWidth / 2.0 - storedManipulation.TranslationX, ActualHeight / 2.0 - storedManipulation.TranslationY));
+                var normalizedMercatorTarget = TransformViewportToNormalizedMercator_Target(new Point(ActualWidth / 2 - storedManipulation.TranslationX, ActualHeight / 2 - storedManipulation.TranslationY));
                 ZoomAndRotateOrigin = new Point?();
                 ViewBeingSetByUserInput = true;
                 SetView(normalizedMercatorTarget, TargetZoomLevel, heading);
@@ -444,7 +430,7 @@ namespace Microsoft.Maps.MapControl.WPF
             {
                 if (_touchTapPointPrevious.HasValue && (DateTime.Now - _touchTapTimePrevious.Value).Milliseconds < _doubleTapDelay && (Math.Abs(_touchTapPointCurrent.Value.X - _touchTapPointPrevious.Value.X) < _doubleTapThreshold && Math.Abs(_touchTapPointCurrent.Value.Y - _touchTapPointPrevious.Value.Y) < _doubleTapThreshold))
                 {
-                    ZoomAboutViewportPoint(1.0, _touchTapPointCurrent.Value);
+                    ZoomAboutViewportPoint(1, _touchTapPointCurrent.Value);
                     _cancelDoubleTap();
                     flag = true;
                 }
@@ -547,12 +533,12 @@ namespace Microsoft.Maps.MapControl.WPF
                 logServiceUriFormat = IsInDesignMode ? null : config["WPFLOGGING"];
                 if (!string.IsNullOrEmpty(logServiceUriFormat))
                 {
-                    logServiceUriFormat = logServiceUriFormat.Replace("{UriScheme}", UriScheme);
-                    logServiceUriFormat = logServiceUriFormat.Replace("{entryPoint}", "{0}");
-                    logServiceUriFormat = logServiceUriFormat.Replace("{authKey}", "{1}");
-                    logServiceUriFormat = logServiceUriFormat.Replace("{productBuildVersion}", "{2}");
-                    logServiceUriFormat = logServiceUriFormat.Replace("{session}", "{3}");
-                    logServiceUriFormat = logServiceUriFormat.Replace("{culture}", "{4}");
+                    logServiceUriFormat = logServiceUriFormat.Replace("{UriScheme}", UriScheme, StringComparison.Ordinal);
+                    logServiceUriFormat = logServiceUriFormat.Replace("{entryPoint}", "{0}", StringComparison.Ordinal);
+                    logServiceUriFormat = logServiceUriFormat.Replace("{authKey}", "{1}", StringComparison.Ordinal);
+                    logServiceUriFormat = logServiceUriFormat.Replace("{productBuildVersion}", "{2}", StringComparison.Ordinal);
+                    logServiceUriFormat = logServiceUriFormat.Replace("{session}", "{3}", StringComparison.Ordinal);
+                    logServiceUriFormat = logServiceUriFormat.Replace("{culture}", "{4}", StringComparison.Ordinal);
                 }
             }
             Log(false);
@@ -602,40 +588,35 @@ namespace Microsoft.Maps.MapControl.WPF
                 Dispatcher.BeginInvoke(new Action(() => OnCredentialsError()));
         }
 
-        private void Log(
-          string entry,
-          CredentialsProvider credentialsProvider,
-          Credentials credentials)
+        private void Log(string entry, CredentialsProvider credentialsProvider, Credentials credentials)
         {
             var logRequestString = string.Format(CultureInfo.InvariantCulture, logServiceUriFormat, entry, credentials.ToString(), version, Guid.Empty, Culture);
             if (_logTimer is object)
                 _logTimer.Dispose();
-            _logTimer = new Timer(LoggingDelay > 0 ? LoggingDelay : 1.0)
+            _logTimer = new Timer(LoggingDelay > 0 ? LoggingDelay : 1)
             {
                 AutoReset = false
             };
             _logTimer.Elapsed += (sender, e) =>
-     {
-         _logTimer.Dispose();
-         _logTimer = null;
-         try
-         {
-             using (var webClient = new WebClient())
-             {
-                 webClient.DownloadStringCompleted += new DownloadStringCompletedEventHandler(LogResponse);
-                 webClient.DownloadStringAsync(new Uri(logRequestString, UriKind.Absolute), credentialsProvider);
-             }
-         }
-         catch (WebException)
-         {
-             EndSession(credentialsProvider);
-             OnCredentialsError();
-         }
-         catch (NotSupportedException)
-         {
-             EndSession(credentialsProvider);
-         }
-     };
+            {
+                _logTimer.Dispose();
+                _logTimer = null;
+                try
+                {
+                    using var webClient = new WebClient();
+                    webClient.DownloadStringCompleted += new DownloadStringCompletedEventHandler(LogResponse);
+                    webClient.DownloadStringAsync(new Uri(logRequestString, UriKind.Absolute), credentialsProvider);
+                }
+                catch (WebException)
+                {
+                    EndSession(credentialsProvider);
+                    OnCredentialsError();
+                }
+                catch (NotSupportedException)
+                {
+                    EndSession(credentialsProvider);
+                }
+            };
             _logTimer.Start();
         }
 
@@ -644,40 +625,35 @@ namespace Microsoft.Maps.MapControl.WPF
             var credentialsValid = e.Error is null;
             var appId = e.UserState as ApplicationIdCredentialsProvider;
             var serverSessionId = (string)null;
-            if (appId is object)
+            if (appId is object && credentialsValid)
             {
-                if (credentialsValid)
+                try
                 {
-                    try
+                    using var memoryStream = new MemoryStream(Encoding.UTF8.GetBytes(e.Result));
+                    if (new DataContractJsonSerializer(typeof(Session)).ReadObject(memoryStream) is Session session)
                     {
-                        Session session;
-                        using (var memoryStream = new MemoryStream(Encoding.UTF8.GetBytes(e.Result)))
-                            session = new DataContractJsonSerializer(typeof(Session)).ReadObject(memoryStream) as Session;
-                        if (session is object)
-                        {
-                            if (!string.IsNullOrEmpty(session.SessionId))
-                                serverSessionId = session.SessionId;
-                        }
+                        if (!string.IsNullOrEmpty(session.SessionId))
+                            serverSessionId = session.SessionId;
                     }
-                    catch (SerializationException)
-                    {
-                    }
+                }
+                catch (SerializationException)
+                {
                 }
             }
             Dispatcher.BeginInvoke(new Action(() =>
-           {
-               if (appId is object)
-               {
-                   if (credentialsValid && serverSessionId is object)
-                       appId.SetSessionId(serverSessionId);
-                   else
-                       appId.EndSession();
-               }
-               if (credentialsValid)
-                   OnCredentialsValid();
-               else
-                   OnCredentialsError();
-           }));
+            {
+                if (appId is object)
+                {
+                    if (credentialsValid && serverSessionId is object)
+                        appId.SetSessionId(serverSessionId);
+                    else
+                        appId.EndSession();
+                }
+                if (credentialsValid)
+                    OnCredentialsValid();
+                else
+                    OnCredentialsError();
+            }));
         }
 
         private void OnCredentialsError() => ShowLoadingError(new CredentialsInvalidException());
@@ -762,16 +738,16 @@ namespace Microsoft.Maps.MapControl.WPF
                 Rotation += additional.Delta.Rotation;
                 TranslationX += additional.Delta.TranslationX;
                 TranslationY += additional.Delta.TranslationY;
-                if (Math.Abs(Rotation) < 0.1 && Math.Abs(1f - ScaleX) < 0.1 && (Math.Abs(1f - ScaleY) < 0.1 && Math.Abs(TranslationX) < 2.0) && Math.Abs(TranslationY) < 2.0)
+                if (Math.Abs(Rotation) < 0.1 && Math.Abs(1f - ScaleX) < 0.1 && (Math.Abs(1f - ScaleY) < 0.1 && Math.Abs(TranslationX) < 2) && Math.Abs(TranslationY) < 2)
                     return false;
                 return flag;
             }
 
             public void Reset()
             {
-                Rotation = 0.0f;
-                TranslationX = 0.0f;
-                TranslationY = 0.0f;
+                Rotation = 0f;
+                TranslationX = 0f;
+                TranslationY = 0f;
                 ScaleX = 1f;
                 ScaleY = 1f;
                 OriginX = int.MinValue;
