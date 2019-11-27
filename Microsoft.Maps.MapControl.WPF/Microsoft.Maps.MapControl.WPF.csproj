@@ -19,6 +19,7 @@
     <Product>Bing Maps WPF Control</Product>
     <Title>Bing Maps WPF Control</Title>
     <AssemblyTitle>Bing Maps WPF Control</AssemblyTitle>
+    <PackageId>ViceCode.MapControl.WPF</PackageId>
   </PropertyGroup>
 
   <ItemGroup>
