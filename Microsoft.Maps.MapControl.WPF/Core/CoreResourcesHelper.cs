@@ -1,4 +1,5 @@
 ﻿using System.Globalization;
+using Microsoft.Maps.MapControl.WPF.Resources;
 
 namespace Microsoft.Maps.MapControl.WPF.Core
 {

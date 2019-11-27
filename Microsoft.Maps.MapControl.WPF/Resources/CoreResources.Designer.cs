@@ -8,8 +8,10 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace Microsoft.Maps.MapControl.WPF.Core {
+namespace Microsoft.Maps.MapControl.WPF.Resources {
     using System;
+    
+    
     /// <summary>
     ///   Класс ресурса со строгой типизацией для поиска локализованных строк и т.д.
     /// </summary>
@@ -37,7 +39,7 @@ namespace Microsoft.Maps.MapControl.WPF.Core {
         internal static global::System.Resources.ResourceManager ResourceManager {
             get {
                 if (object.ReferenceEquals(resourceMan, null)) {
-                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("Microsoft.Maps.MapControl.WPF.Core.CoreResources", typeof(CoreResources).Assembly);
+                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("Microsoft.Maps.MapControl.WPF.Resources.CoreResources", typeof(CoreResources).Assembly);
                     resourceMan = temp;
                 }
                 return resourceMan;

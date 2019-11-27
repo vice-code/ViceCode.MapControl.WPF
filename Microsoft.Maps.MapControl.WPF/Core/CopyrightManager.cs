@@ -6,6 +6,7 @@ using System.Windows;
 using System.Xml;
 using System.Xml.Linq;
 using Microsoft.Maps.MapControl.WPF.PlatformServices;
+using Microsoft.Maps.MapControl.WPF.Resources;
 
 namespace Microsoft.Maps.MapControl.WPF.Core
 {

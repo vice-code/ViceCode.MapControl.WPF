@@ -4,6 +4,7 @@ using System.Text.RegularExpressions;
 using System.Windows;
 using System.Windows.Media.Imaging;
 using Microsoft.Maps.MapControl.WPF.Core;
+using Microsoft.Maps.MapControl.WPF.Resources;
 
 namespace Microsoft.Maps.MapControl.WPF
 {

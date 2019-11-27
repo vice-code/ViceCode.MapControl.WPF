@@ -2,7 +2,7 @@
 using System.ComponentModel;
 using System.Globalization;
 using System.Reflection;
-using Microsoft.Maps.MapControl.WPF.Core;
+using Microsoft.Maps.MapControl.WPF.Resources;
 
 namespace Microsoft.Maps.MapControl.WPF.Design
 {

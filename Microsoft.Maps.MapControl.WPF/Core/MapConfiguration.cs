@@ -2,6 +2,7 @@
 using System.ComponentModel;
 using System.Windows;
 using System.Xml;
+using Microsoft.Maps.MapControl.WPF.Resources;
 
 namespace Microsoft.Maps.MapControl.WPF.Core
 {
