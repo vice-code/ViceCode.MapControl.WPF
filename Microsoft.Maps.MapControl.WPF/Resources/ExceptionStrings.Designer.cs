@@ -160,6 +160,15 @@ namespace Microsoft.Maps.MapControl.WPF.Resources {
         }
         
         /// <summary>
+        ///   Ищет локализованную строку, похожую на Map mode must be non-null.
+        /// </summary>
+        internal static string MapCore_UpdateMapMode_NonNull {
+            get {
+                return ResourceManager.GetString("MapCore_UpdateMapMode_NonNull", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Ищет локализованную строку, похожую на .
         /// </summary>
         internal static string TileSource_InvalidSubdomain_stringNull {

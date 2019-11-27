@@ -183,4 +183,7 @@
   <data name="TypeConverter_InvalidPositionOriginFormat" xml:space="preserve">
     <value />
   </data>
+  <data name="MapCore_UpdateMapMode_NonNull" xml:space="preserve">
+    <value>Map mode must be non-null</value>
+  </data>
 </root>
