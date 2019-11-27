@@ -216,3 +216,9 @@ dotnet_naming_style.начинается_с__.required_prefix = _
 dotnet_naming_style.начинается_с__.required_suffix = 
 dotnet_naming_style.начинается_с__.word_separator = 
 dotnet_naming_style.начинается_с__.capitalization = camel_case
+
+# CA1031: Не перехватывать исключения общих типов
+dotnet_diagnostic.CA1031.severity = none
+
+# CA1056: Свойства URI не должны быть строками
+dotnet_diagnostic.CA1056.severity = none
