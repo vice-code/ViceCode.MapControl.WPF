@@ -4,6 +4,21 @@
     <TargetFramework>netcoreapp3.0</TargetFramework>
     <UseWPF>true</UseWPF>
     <LangVersion>preview</LangVersion>
+    <Copyright>© Microsoft;© ViceCode</Copyright>
+    <PackageLicenseFile>LICENSE</PackageLicenseFile>
+    <RepositoryUrl>https://github.com/vice-code/ViceCode.MapControl.WPF</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
+    <Company>Microsoft;ViceCode</Company>
+    <Authors>Microsoft;DenSmoke</Authors>
+    <PackageProjectUrl>https://github.com/vice-code/ViceCode.MapControl.WPF</PackageProjectUrl>
+    <PackageIconUrl>https://github.com/vice-code/ViceCode.MapControl.WPF/raw/master/Microsoft.Maps.MapControl.WPF/Overlays/logo_powered_by.png</PackageIconUrl>
+    <PackageTags>maps;map;wpf;control;bing;microsoft;netcore;netcore3;dotnet</PackageTags>
+    <Icon>Overlays\logo_powered_by.png</Icon>
+    <Description>Reverse engineered Microsoft.Maps.MapControl.WPF NuGet package targeted to .NET Core 3.0</Description>
+    <Version>2.0.0-beta01</Version>
+    <Product>Bing Maps WPF Control</Product>
+    <Title>Bing Maps WPF Control</Title>
+    <AssemblyTitle>Bing Maps WPF Control</AssemblyTitle>
   </PropertyGroup>
 
   <ItemGroup>
@@ -16,12 +31,12 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Compile Update="Core\CoreResources.Designer.cs">
+    <Compile Update="Resources\CoreResources.Designer.cs">
       <DesignTime>True</DesignTime>
       <AutoGen>True</AutoGen>
       <DependentUpon>CoreResources.resx</DependentUpon>
     </Compile>
-    <Compile Update="Core\ExceptionStrings.Designer.cs">
+    <Compile Update="Resources\ExceptionStrings.Designer.cs">
       <DesignTime>True</DesignTime>
       <AutoGen>True</AutoGen>
       <DependentUpon>ExceptionStrings.resx</DependentUpon>
@@ -29,14 +44,18 @@
   </ItemGroup>
 
   <ItemGroup>
-    <EmbeddedResource Update="Core\CoreResources.resx">
+    <EmbeddedResource Update="Resources\CoreResources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>CoreResources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
-    <EmbeddedResource Update="Core\ExceptionStrings.resx">
+    <EmbeddedResource Update="Resources\ExceptionStrings.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>ExceptionStrings.Designer.cs</LastGenOutput>
     </EmbeddedResource>
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="..\LICENSE" Pack="true" PackagePath="" />
   </ItemGroup>
 
 </Project>
