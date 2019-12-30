@@ -3,4 +3,4 @@
 
 # ViceCode.MapControl.WPF
 
-Reverse engineered [Microsoft.Maps.MapControl.WPF](https://www.nuget.org/packages/Microsoft.Maps.MapControl.WPF) NuGet package targeted to .NET Core 3.0
+Reverse engineered [Microsoft.Maps.MapControl.WPF](https://www.nuget.org/packages/Microsoft.Maps.MapControl.WPF) NuGet package targeted to .NET Core 3.1
