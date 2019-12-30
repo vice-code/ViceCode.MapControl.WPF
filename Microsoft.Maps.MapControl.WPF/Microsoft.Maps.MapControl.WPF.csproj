@@ -15,7 +15,7 @@
     <PackageTags>maps;map;wpf;control;bing;microsoft;netcore;netcore3;dotnet</PackageTags>
     <Icon>Overlays\logo_powered_by.png</Icon>
     <Description>Reverse engineered Microsoft.Maps.MapControl.WPF NuGet package targeted to .NET Core 3.1</Description>
-    <Version>2.0.0-beta03</Version>
+    <Version>2.0.0</Version>
     <Product>Bing Maps WPF Control</Product>
     <Title>Bing Maps WPF Control</Title>
     <AssemblyTitle>Bing Maps WPF Control</AssemblyTitle>
