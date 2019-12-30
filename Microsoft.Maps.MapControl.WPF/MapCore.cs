@@ -20,9 +20,9 @@ namespace Microsoft.Maps.MapControl.WPF
     [ContentProperty("Children")]
     public class MapCore : Control, IDisposable
     {
-        public static readonly DependencyProperty ZoomLevelProperty = DependencyProperty.Register(nameof(ZoomLevel), typeof(double), typeof(MapCore), new PropertyMetadata(1, new PropertyChangedCallback(OnZoomLevelChanged)));
+        public static readonly DependencyProperty ZoomLevelProperty = DependencyProperty.Register(nameof(ZoomLevel), typeof(double), typeof(MapCore), new PropertyMetadata(1d, new PropertyChangedCallback(OnZoomLevelChanged)));
         public static readonly DependencyProperty ScaleVisibilityProperty = DependencyProperty.Register(nameof(ScaleVisibility), typeof(Visibility), typeof(MapCore), new PropertyMetadata(new PropertyChangedCallback(OnScaleVisibilityChanged)));
-        public static readonly DependencyProperty HeadingProperty = DependencyProperty.Register(nameof(Heading), typeof(double), typeof(MapCore), new PropertyMetadata(0, new PropertyChangedCallback(OnHeadingChanged)));
+        public static readonly DependencyProperty HeadingProperty = DependencyProperty.Register(nameof(Heading), typeof(double), typeof(MapCore), new PropertyMetadata(0d, new PropertyChangedCallback(OnHeadingChanged)));
         public static readonly DependencyProperty CenterProperty = DependencyProperty.Register(nameof(Center), typeof(Location), typeof(MapCore), new PropertyMetadata(new Location(), new PropertyChangedCallback(OnCenterChanged)));
         public static readonly DependencyProperty CredentialsProviderProperty = DependencyProperty.Register(nameof(CredentialsProvider), typeof(CredentialsProvider), typeof(MapCore), new PropertyMetadata(new PropertyChangedCallback(OnCredentialsProviderChangedCallback)));
         public static readonly DependencyProperty CultureProperty = DependencyProperty.Register(nameof(Culture), typeof(string), typeof(MapCore), new PropertyMetadata((sender, e) => (sender as MapCore).UpdateCulture()));
