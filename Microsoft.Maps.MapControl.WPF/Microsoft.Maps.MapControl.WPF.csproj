@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk.WindowsDesktop">
 
   <PropertyGroup>
-    <TargetFramework>netcoreapp3.0</TargetFramework>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
     <UseWPF>true</UseWPF>
     <LangVersion>preview</LangVersion>
     <Copyright>© Microsoft;© ViceCode</Copyright>
@@ -14,12 +14,14 @@
     <PackageIconUrl>https://github.com/vice-code/ViceCode.MapControl.WPF/raw/master/Microsoft.Maps.MapControl.WPF/Overlays/logo_powered_by.png</PackageIconUrl>
     <PackageTags>maps;map;wpf;control;bing;microsoft;netcore;netcore3;dotnet</PackageTags>
     <Icon>Overlays\logo_powered_by.png</Icon>
-    <Description>Reverse engineered Microsoft.Maps.MapControl.WPF NuGet package targeted to .NET Core 3.0</Description>
-    <Version>2.0.0-beta01</Version>
+    <Description>Reverse engineered Microsoft.Maps.MapControl.WPF NuGet package targeted to .NET Core 3.1</Description>
+    <Version>2.0.0-beta02</Version>
     <Product>Bing Maps WPF Control</Product>
     <Title>Bing Maps WPF Control</Title>
     <AssemblyTitle>Bing Maps WPF Control</AssemblyTitle>
     <PackageId>ViceCode.MapControl.WPF</PackageId>
+    <PackageReleaseNotes>- Changed target framework to .NET Core 3.1
+- Updated System.ServiceModel.Http and System.ServiceModel.Primitives to 4.7.0</PackageReleaseNotes>
   </PropertyGroup>
 
   <ItemGroup>
@@ -27,8 +29,8 @@
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
-    <PackageReference Include="System.ServiceModel.Http" Version="4.6.0" />
-    <PackageReference Include="System.ServiceModel.Primitives" Version="4.6.0" />
+    <PackageReference Include="System.ServiceModel.Http" Version="4.7.0" />
+    <PackageReference Include="System.ServiceModel.Primitives" Version="4.7.0" />
   </ItemGroup>
 
   <ItemGroup>
